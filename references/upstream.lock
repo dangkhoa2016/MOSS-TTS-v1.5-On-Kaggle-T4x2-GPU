@@ -1,0 +1,3 @@
+repository=https://github.com/OpenMOSS/MOSS-TTS.git
+commit=934d6826b084c46a0d033402174d5f8ac4ed2519
+model=OpenMOSS-Team/MOSS-TTS-v1.5
