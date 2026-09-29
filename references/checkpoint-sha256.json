@@ -1,0 +1,18 @@
+{
+  "schema": "moss-t4x2/checkpoint-sha256/v1",
+  "confirmation": "pending",
+  "model_id": "OpenMOSS-Team/MOSS-TTS-v1.5",
+  "kaggle_mirror": "dangkhoa2016/openmoss-team-moss-tts-v1-5",
+  "note": "expected_sha256 is intentionally empty. Populate it from the attached Kaggle mirror and set confirmation to confirmed only after recomputing the digests on that mirror version. Until then the reference is reported as UNVERIFIED and never gates a PASS marker.",
+  "expected_sha256": {},
+  "development_measured_sha256": {
+    "note": "Measured during development on the Kaggle mirror. Not yet re-confirmed against the mirror version being qualified, so it is informational only.",
+    "model-00001-of-00004.safetensors": "749b82d07cebea77dd15af365e2efeb1dc0dd54537f7010795fdf42f520743a9",
+    "model-00002-of-00004.safetensors": "4d891c8adb8bf9c135e8a44cd9f003f1dbf8b09278ced48d5af1fe7d989efb39",
+    "model-00003-of-00004.safetensors": "111013e05174e67748443eafdd4d64c051292d0e5fce2cac23a16988b661eea1",
+    "model-00004-of-00004.safetensors": "951ee88cf85996ee5c39441ace6e50f52894adad5da42ad2314b9a9db7f940b8",
+    "config.json": "214fc997d98f51ab57925a5939afc6280e76044198b664221622e70d098ed06e",
+    "processor_config.json": "6821d4805f10fb8b5cc743c021215097e03f1a25f7c220dfc4fb0d62b5dc97e0",
+    "model.safetensors.index.json": "021ef3f74a92ee33fc076dde096d4fa9b7b45c34c9bdbfe730bf79368ac86bb2"
+  }
+}
