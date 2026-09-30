@@ -1,0 +1,32 @@
+{
+  "text": "Today we are testing the original Moss TTS version one point five on two Tesla T4 GPUs.",
+  "language": "English",
+  "seed": 42,
+  "max_new_tokens": 256,
+  "dtype": "bfloat16",
+  "audio_temperature": 1.7,
+  "audio_top_p": 0.8,
+  "audio_top_k": 25,
+  "audio_repetition_penalty": 1.0,
+  "attn_implementation": "sdpa",
+  "model_stage": "generate_then_unload",
+  "codec_stage": "decode_after_model_unload",
+  "model_dir": "/kaggle/input/models/dangkhoa2016/openmoss-team-moss-tts-v1-5/transformers/default/1",
+  "model_load_seconds": 90.71176758100046,
+  "sample_rate": 24000,
+  "num_samples": 170880,
+  "wav_path": "/kaggle/working/moss-canonical-smoke.wav",
+  "signal": {
+    "status": "PASS",
+    "peak": 0.8031569719314575,
+    "rms": 0.10557903186651614,
+    "clipped": false
+  },
+  "generate_seconds": 12.087988299000244,
+  "decode_seconds": 28.531693001999884,
+  "audio_duration_seconds": 7.12,
+  "generation_rtf": 1.697751165589922,
+  "decode_rtf": 4.007260253089871,
+  "gpu0_peak_alloc_gib": 7.973011016845703,
+  "gpu1_peak_alloc_gib": 7.943464279174805
+}
