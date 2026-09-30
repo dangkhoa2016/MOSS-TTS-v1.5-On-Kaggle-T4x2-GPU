@@ -1,0 +1,19 @@
+{
+  "schema_version": 1,
+  "artifact_role": "pre-release candidate executed notebook evidence",
+  "asset_filename": "moss-tts-v1-5-kaggle-t4x2-candidate-evidence.ipynb",
+  "source_ref": "f43518ea4b866b42a75c7b600ab146d1b9005bd8",
+  "sha256": "ba9fff08dcf46207d69bc3e6d6a366622d800d6afeaf2b4c418ca8b599f7a7bf",
+  "size_bytes": 5793026,
+  "release_asset": true,
+  "tracked_in_git": false,
+  "technical_markers": [
+    "PUBLIC_SOURCE_PIN=PASS",
+    "GPU_T4X2=PASS",
+    "MODEL_IDENTITY_AND_SAFETENSORS=PASS",
+    "DEPENDENCY_BASELINE=PASS",
+    "KAGGLE_PRODUCTION_DEMO=PASS"
+  ],
+  "human_review": "HUMAN_LISTENING_REVIEW=PASS",
+  "public_follow_up": "After v1.0.0 publication, import notebooks/kaggle-production-demo.ipynb from GitHub main into Kaggle and run it fresh for the publicly shared reproducibility/showcase notebook."
+}
