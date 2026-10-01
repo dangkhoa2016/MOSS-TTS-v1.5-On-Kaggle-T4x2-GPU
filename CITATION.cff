@@ -1,0 +1,8 @@
+cff-version: 1.2.0
+title: "MOSS-TTS v1.5 on Kaggle T4x2 GPU"
+message: "If you use this engineering project, cite this repository and the upstream OpenMOSS project/model."
+type: software
+authors:
+  - family-names: "Khoa"
+    given-names: "Đăng"
+version: 1.0.0
