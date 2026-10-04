@@ -1,4 +1,4 @@
-accelerate>=1.10.1
+accelerate>=1.15.0
 safetensors>=0.5
 transformers>=5.0,<6
 pytest>=8
