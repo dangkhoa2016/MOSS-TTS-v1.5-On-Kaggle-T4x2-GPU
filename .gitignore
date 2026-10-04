@@ -1,0 +1,16 @@
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.venv/
+venv/
+.superpowers/
+*.safetensors
+*.bin
+*.pth
+*.pt
+*.onnx
+*.gguf
+results/**/*.wav
+results/**/*.flac
+!results/.gitkeep
+!evidence/.gitkeep

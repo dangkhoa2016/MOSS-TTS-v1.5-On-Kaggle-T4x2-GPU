@@ -1,0 +1,10 @@
+MOSS-TTS-v1.5-On-Kaggle-T4x2-GPU
+Copyright (c) 2026 Đăng Khoa <i.am@dangkhoa.dev>
+
+This independent engineering project is not affiliated with or endorsed by OpenMOSS.
+Upstream MOSS-TTS source and related materials belong to their respective copyright holders.
+Model weights are not redistributed in this repository.
+
+Upstream project: https://github.com/OpenMOSS/MOSS-TTS
+Reference model: OpenMOSS-Team/MOSS-TTS-v1.5
+Reference codec/tokenizer: OpenMOSS-Team/MOSS-Audio-Tokenizer
