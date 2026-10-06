@@ -98,7 +98,7 @@ def test_notebook_runs_preflight_inventory_and_generation(code_cells):
     joined = "\n".join(code_cells)
     assert "scripts/preflight.py" in joined
     assert "scripts/inventory_model.py" in joined
-    assert "scripts/generate.py" in joined
+    assert "scripts/generate_batch.py" in joined
     assert '"--report"' in joined
     assert "check=True" in joined
 
@@ -131,7 +131,7 @@ def test_repo_scripts_receive_repo_root_on_pythonpath(code_cells):
     assert "SUBPROCESS_ENV = os.environ.copy()" in joined
     assert 'SUBPROCESS_ENV["PYTHONPATH"]' in joined
     assert "str(ROOT)" in joined
-    for script in ("scripts/preflight.py", "scripts/inventory_model.py", "scripts/generate.py"):
+    for script in ("scripts/preflight.py", "scripts/inventory_model.py", "scripts/generate_batch.py"):
         cell = _cell_containing(code_cells, script)
         assert "env=SUBPROCESS_ENV" in cell, f"{script} must receive repo-root PYTHONPATH"
 
@@ -141,7 +141,8 @@ def test_reports_are_parsed_from_files_not_declared(code_cells):
     assert "json.loads((REPORTS" in joined
     assert "preflight.json" in joined
     assert "inventory.json" in joined
-    assert "report_path.read_text()" in joined
+    assert "showcase-batch-summary.json" in joined
+    assert '.json").read_text()' in joined
 
 
 def test_scorecard_is_derived_not_literal(code_cells):
@@ -260,8 +261,8 @@ def test_every_code_cell_has_explanatory_markdown_immediately_before(notebook):
 def test_showcase_has_two_vietnamese_two_english_two_codeswitch_and_ipa(all_text):
     for case_id in SHOWCASE_CASES:
         assert case_id in all_text, case_id
-    assert all_text.count('language="Vietnamese"') >= 3
-    assert all_text.count('language="English"') >= 3
+    assert all_text.count('"language": "Vietnamese"') >= 3
+    assert all_text.count('"language": "English"') >= 3
     assert "Vietnamese-only" in all_text
     assert "English-only" in all_text
     assert "code-switch" in all_text
@@ -274,7 +275,7 @@ def test_each_reviewer_showcase_call_has_its_own_guidance_markdown(notebook):
         if cell["cell_type"] != "code":
             continue
         source = "".join(cell["source"])
-        if "run_showcase_case(" in source and "def run_showcase_case" not in source:
+        if "display_showcase_case(" in source and "def display_showcase_case" not in source:
             showcase_calls.append((index, cell))
     assert len(showcase_calls) == 7
     for index, cell in showcase_calls:
@@ -284,7 +285,7 @@ def test_each_reviewer_showcase_call_has_its_own_guidance_markdown(notebook):
 
 
 def test_showcase_helper_prints_reviewer_facing_runtime_metrics(code_cells):
-    helper = _cell_containing(code_cells, "def run_showcase_case")
+    helper = _cell_containing(code_cells, "def display_showcase_case")
     for metric in (
         "audio_duration_seconds",
         "generation_rtf",
@@ -335,7 +336,7 @@ def test_each_reviewer_sample_has_structured_bilingual_review_guidance(notebook)
         if cell["cell_type"] != "code":
             continue
         source = "".join(cell["source"])
-        if "run_showcase_case(" in source and "def run_showcase_case" not in source:
+        if "display_showcase_case(" in source and "def display_showcase_case" not in source:
             sample_guidance.append("".join(cells[index - 1]["source"]))
     assert len(sample_guidance) == 7
     for guidance in sample_guidance:
@@ -365,26 +366,24 @@ def test_checkpoint_sha256_recompute_is_optional_and_disabled_by_default(code_ce
 def test_technical_samples_use_ipa_control_for_bf16(notebook):
     cells = notebook["cells"]
     expected_ipa = "/biː ɛf sɪkˈstiːn/"
-    for case_id in ("vi_longform", "en_technical"):
-        for index, cell in enumerate(cells):
-            if cell["cell_type"] != "code":
-                continue
-            source = "".join(cell["source"])
-            if f'"{case_id}"' not in source:
-                continue
-            assert expected_ipa in source, case_id
-            assert "BF16" not in source, f"{case_id} must not synthesize raw BF16"
-            guidance = "".join(cells[index - 1]["source"])
-            assert "BF16" in guidance, case_id
-            assert expected_ipa in guidance, case_id
-            assert "pronunciation control" in guidance.lower(), case_id
-            break
-        else:
-            raise AssertionError(f"missing showcase case: {case_id}")
+    batch_cell = next(
+        "".join(cell["source"])
+        for cell in cells
+        if cell["cell_type"] == "code" and "SHOWCASE_CASES = [" in "".join(cell["source"])
+    )
+    for case_id, display_index in (("vi_longform", 15), ("en_technical", 19)):
+        assert f'"id": "{case_id}"' in batch_cell, case_id
+        case_fragment = batch_cell.split(f'"id": "{case_id}"', 1)[1].split('},', 1)[0]
+        assert expected_ipa in case_fragment, case_id
+        assert "BF16" not in case_fragment, f"{case_id} must not synthesize raw BF16"
+        guidance = "".join(cells[display_index - 1]["source"])
+        assert "BF16" in guidance, case_id
+        assert expected_ipa in guidance, case_id
+        assert "pronunciation control" in guidance.lower(), case_id
 
 
 def test_showcase_generation_streams_live_progress_instead_of_capturing_silently(code_cells):
-    cell = _cell_containing(code_cells, "def run_showcase_case")
+    cell = _cell_containing(code_cells, "scripts/generate_batch.py")
     assert "capture_output=True" not in cell
     assert "subprocess.Popen" in cell
     assert "stdout=subprocess.PIPE" in cell
@@ -408,3 +407,45 @@ def test_generate_script_emits_stage_progress_markers():
     ):
         assert marker in text
     assert "flush=True" in text
+
+
+def test_showcase_uses_one_batch_runner_process_for_all_reviewer_cases(code_cells):
+    joined = "\n".join(code_cells)
+    assert "scripts/generate_batch.py" in joined
+    assert joined.count("scripts/generate.py") == 0
+    assert "subprocess.Popen" in joined
+    assert "--cases" in joined
+
+
+def test_batch_runner_case_done_metrics_use_literal_report_keys():
+    source = (Path(__file__).resolve().parents[1] / "scripts" / "generate_batch.py").read_text()
+    assert 'report["generation_rtf"]' in source
+    assert 'report["decode_rtf"]' in source
+    assert 'report[generation_rtf]' not in source
+    assert 'report[decode_rtf]' not in source
+
+
+def test_showcase_batch_runner_loads_backbone_and_decoder_once():
+    source = (Path(__file__).resolve().parents[1] / "scripts" / "generate_batch.py").read_text()
+    tree = ast.parse(source)
+    calls = [
+        node for node in ast.walk(tree)
+        if isinstance(node, ast.Call)
+        and isinstance(node.func, ast.Attribute)
+        and node.func.attr == "from_pretrained"
+    ]
+    assert len(calls) == 1, "batch runner must materialize the BF16 backbone exactly once"
+    parent = {child: node for node in ast.walk(tree) for child in ast.iter_child_nodes(node)}
+    cursor = calls[0]
+    ancestors = []
+    while cursor in parent:
+        cursor = parent[cursor]
+        ancestors.append(cursor)
+    assert not any(isinstance(node, (ast.For, ast.While)) for node in ancestors), (
+        "BF16 backbone load must be outside every per-case loop"
+    )
+    assert source.count("load_processor(model_dir)") == 2, (
+        "batch runner should load the processor once for input preparation and once for shared decode"
+    )
+    assert "for case in cases:" in source
+    assert "cpu_outputs_by_case" in source
